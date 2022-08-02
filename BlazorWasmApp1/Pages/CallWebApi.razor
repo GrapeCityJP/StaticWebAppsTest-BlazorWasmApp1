@@ -1,0 +1,50 @@
+﻿@page "/call-web-api"
+@using BlazorWasmApp1.Data
+@inject HttpClient Http
+
+<PageTitle>Call Web API</PageTitle>
+
+<h1>Albums</h1>
+
+@if (albums == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>番号</th>
+                <th>タイトル</th>
+                <th>アーティスト</th>
+                <th>価格</th>
+                <th>URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var album in albums)
+            {
+                <tr>
+                    <td>@album.Id</td>
+                    <td>@album.Title</td>
+                    <td>@album.Artist</td>
+                    <td>@album.Price</td>
+                    <td>@album.Image_url</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<Album>? albums = Array.Empty<Album>();
+    private const string ServiceEndpoint = "/api/albums";
+
+    protected override async Task OnInitializedAsync() => await GetAlbums();
+      
+    private async Task GetAlbums()
+    {
+        albums = await Http.GetFromJsonAsync<Album[]>(ServiceEndpoint);
+    }
+}
